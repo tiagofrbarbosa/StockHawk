@@ -2,6 +2,7 @@ package com.udacity.stockhawk.ui;
 
 import android.content.ContentResolver;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -86,6 +87,8 @@ public class DetailActivity extends AppCompatActivity {
         dataset.setDrawCubic(true);
         dataset.setDrawFilled(true);
 
+        lineChart.setDescription(s);
+        lineChart.setBackgroundColor(Color.WHITE);
         lineChart.setData(data);
         lineChart.animateY(5000);
     }
