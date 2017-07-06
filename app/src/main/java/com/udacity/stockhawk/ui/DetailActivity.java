@@ -19,6 +19,7 @@ import com.udacity.stockhawk.data.Contract;
 import java.util.ArrayList;
 
 import butterknife.BindView;
+import timber.log.Timber;
 
 
 /**
@@ -43,8 +44,6 @@ public class DetailActivity extends AppCompatActivity {
 
         String s = getIntent().getExtras().getString("symbol");
 
-        Toast.makeText(this, s, Toast.LENGTH_LONG).show();
-
         String[] projection = new String[]{Contract.Quote._ID,Contract.Quote.COLUMN_SYMBOL, Contract.Quote.COLUMN_PRICE,
                                            Contract.Quote.COLUMN_ABSOLUTE_CHANGE, Contract.Quote.COLUMN_PERCENTAGE_CHANGE, Contract.Quote.COLUMN_HISTORY};
 
@@ -54,42 +53,36 @@ public class DetailActivity extends AppCompatActivity {
 
         Cursor cursor = mResolver.query(mUri, projection, selection, selectionArgs, sortOrder);
 
-        int mCursorCount;
 
         try{
             cursor.moveToFirst();
-            mCursorCount = cursor.getCount();
         }catch (Exception e){
-            mCursorCount = 0;
+            Timber.e("Cursor error");
         }
 
-        Toast.makeText(this, String.valueOf(mCursorCount), Toast.LENGTH_LONG).show();
-
-        Log.i("TABELA", cursor.getString(0) + " " +  cursor.getString(1)+ " " +  cursor.getString(2)
-                + " " +  cursor.getString(3)+ " " +  cursor.getString(4)+ " " +  cursor.getString(5));
+        String[] lines = cursor.getString(5).split("\\r?\\n");
 
         LineChart lineChart = (LineChart) findViewById(R.id.chart);
 
         ArrayList<Entry> entries = new ArrayList<>();
-        entries.add(new Entry(4f, 0));
-        entries.add(new Entry(8f, 1));
-        entries.add(new Entry(6f, 2));
-        entries.add(new Entry(2f, 3));
-        entries.add(new Entry(18f, 4));
-        entries.add(new Entry(9f, 5));
 
-        LineDataSet dataset = new LineDataSet(entries, "# of Calls");
+
+        for(int i=0; i < lines.length; i++){
+            float v =  Float.parseFloat(lines[i].substring(15,21));
+            entries.add(new Entry(v, i));
+        }
+
+        LineDataSet dataset = new LineDataSet(entries, "# of quotes");
 
         ArrayList<String> labels = new ArrayList<String>();
-        labels.add("January");
-        labels.add("February");
-        labels.add("March");
-        labels.add("April");
-        labels.add("May");
-        labels.add("June");
+
+        for(int i=0; i < lines.length; i++){
+            labels.add(String.valueOf(i));
+        }
+
 
         LineData data = new LineData(labels, dataset);
-        dataset.setColors(ColorTemplate.JOYFUL_COLORS); //
+        dataset.setColors(ColorTemplate.JOYFUL_COLORS);
         dataset.setDrawCubic(true);
         dataset.setDrawFilled(true);
 
