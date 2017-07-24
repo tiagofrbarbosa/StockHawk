@@ -81,8 +81,11 @@ public class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory
         view.setTextViewText(R.id.bid_price, bidPrice);
         view.setTextViewText(R.id.change, data.getString(4));
 
-
-            view.setInt(R.id.change, "setBackgroundResource", R.drawable.percent_change_pill_red);
+            if(data.getFloat(4) > 0){
+                view.setInt(R.id.change, "setBackgroundResource", R.drawable.percent_change_pill_green);
+            }else {
+                view.setInt(R.id.change, "setBackgroundResource", R.drawable.percent_change_pill_red);
+            }
 
         final Intent fillInIntent = new Intent();
         //final Bundle extras = new Bundle();
