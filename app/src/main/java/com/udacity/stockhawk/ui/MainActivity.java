@@ -25,6 +25,8 @@ import com.udacity.stockhawk.data.Contract;
 import com.udacity.stockhawk.data.PrefUtils;
 import com.udacity.stockhawk.sync.QuoteSyncJob;
 
+import java.io.IOException;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
@@ -122,17 +124,24 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     void addStock(String symbol) {
-        if (symbol != null && !symbol.isEmpty()) {
+
+        String symbol_correct = symbol.replaceAll("[^a-zA-Z]", "");
+
+        if (symbol_correct != null && !symbol_correct.isEmpty()) {
 
             if (networkUp()) {
                 swipeRefreshLayout.setRefreshing(true);
+                PrefUtils.addStock(this, symbol_correct);
+                QuoteSyncJob.syncImmediately(this);
+
             } else {
                 String message = getString(R.string.toast_stock_added_no_connectivity, symbol);
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show();
             }
 
-            PrefUtils.addStock(this, symbol);
-            QuoteSyncJob.syncImmediately(this);
+        }else{
+            String message = getString(R.string.toast_stock_invalid);
+            Toast.makeText(this, message, Toast.LENGTH_LONG).show();
         }
     }
 

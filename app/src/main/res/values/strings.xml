@@ -35,5 +35,6 @@
     <string name="fab_description">Floating action button to add quotes</string>
     <string name="symbol_description">text view to show symbol</string>
     <string name="change_button_description">button to change units</string>
+    <string name="toast_stock_invalid">Invalid Stock!</string>
 
 </resources>
